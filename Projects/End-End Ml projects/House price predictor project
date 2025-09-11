@@ -1,0 +1,1 @@
+This project builds an end-to-end Machine Learning pipeline for predicting house prices using the Ames Housing dataset. It demonstrates real-world ML engineering practices such as data ingestion, preprocessing, feature engineering, model training, experiment tracking (MLflow), and deployment pipelines.
