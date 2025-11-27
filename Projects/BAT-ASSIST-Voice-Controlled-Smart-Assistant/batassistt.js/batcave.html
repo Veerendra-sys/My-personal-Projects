@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Batcave Dashboard</title>
+    <style>
+   body {
+  margin: 0;
+  font-family: "Segoe UI", sans-serif;
+  color: #e0e0e0;
+  background: black url("batcave.gif") no-repeat center center fixed;
+  background-size: cover;
+}
+
+.batcave-container {
+  max-width: 900px;
+  margin: auto;
+  padding: 30px;
+  backdrop-filter: blur(12px);
+  background-color: rgba(0, 0, 0, 0.65);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.1);
+}
+
+textarea,
+input[type="time"],
+input[type="text"] {
+  width: 100%;
+  margin-bottom: 10px;
+  font-size: 1rem;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.1);
+}
+
+textarea::placeholder,
+input::placeholder {
+  color: #aaa;
+}
+
+button {
+  padding: 12px 24px;
+  margin: 10px 10px 0 0;
+  cursor: pointer;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(145deg, #1f1f1f, #2b2b2b);
+  color: #f0f0f0;
+  font-weight: bold;
+  box-shadow: 0 0 12px rgba(0, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background: #3b3b3b;
+  box-shadow: 0 0 15px #f39c12;
+}
+
+h1,
+h2 {
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+  color: #f39c12;
+}
+
+#help-section {
+  margin-top: 40px;
+  padding: 20px;
+  background-color: rgba(20, 20, 20, 0.85);
+  border-radius: 12px;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  border-left: 4px solid #f39c12;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+#help-section h2 {
+  margin-top: 0;
+  color: #ffdd57;
+}
+
+#help-section li {
+  margin-bottom: 10px;
+}
+
+
+
+      
+    </style>
+  </head>
+
+  <body>
+    <section class="batcave-container">
+      <h1>🦇 Batcave Dashboard</h1>
+
+      <div class="dashboard-section">
+        <h2>Notes</h2>
+        <textarea id="notes" placeholder="Write your notes here..."></textarea>
+      </div>
+
+      <div class="dashboard-section">
+        <h2>Important Dates</h2>
+        <textarea
+          id="dates"
+          placeholder="Add important dates here..."
+        ></textarea>
+      </div>
+
+      <div class="dashboard-section">
+        <h2>To-Do List</h2>
+        <textarea id="todos" placeholder="Add your tasks here..."></textarea>
+      </div>
+
+      <button id="saveBtn">💾 Save</button>
+      <button id="clearBtn">🗑️ Clear All</button>
+      <button onclick="startVoiceCommands()">🎙️ Voice Command</button>
+
+      <div class="dashboard-section">
+        <h2>Set Reminder</h2>
+        <input type="time" id="reminderTime" />
+        <input type="text" id="reminderText" placeholder="Reminder text" />
+        <button onclick="setReminder()">🔔 Set Reminder</button>
+        <button onclick="stopReminder()">⏹️ Stop Reminder</button>
+      </div>
+
+      <audio id="reminderSound" src="reminder.mp3"></audio>
+
+      <div id="help-section">
+        <h2>🗣️ Voice Commands Supported:</h2>
+        <ul>
+          <li>
+            <strong>note [text]</strong> - Add text to Notes.<br /><em
+              >Example:</em
+            >
+            "note buy groceries"
+          </li>
+          <li>
+            <strong>date [text]</strong> - Add text to Important Dates.<br /><em
+              >Example:</em
+            >
+            "date birthday on May 15"
+          </li>
+          <li>
+            <strong>to do [text]</strong> or <strong>todo [text]</strong> - Add
+            text to To-Do List.<br /><em>Example:</em> "to do finish report"
+          </li>
+          <li><strong>save</strong> - Save all sections to local storage.</li>
+          <li>
+            <strong>clear all</strong> - Clear all sections and local storage.
+          </li>
+          <li>
+            <strong>remind me at HH:MM [message]</strong> - Set a reminder at
+            given 24-hour time with message.<br /><em>Example:</em> "remind me
+            at 14:30 meeting with team"
+          </li>
+          <li>
+            <strong>stop reminder</strong> - Stop any repeating reminder voice
+            and audio.
+          </li>
+        </ul>
+      </div>
+      <audio id="reminderSound" src="reminder.mp3" preload="auto"></audio>
+<audio id="bgMusic" src="background.mp3" loop></audio>
+<div id="commandLog" style="margin-top: 10px; font-family: monospace; color: lime;"></div>
+
+    </section>
+
+    <script>
+document.addEventListener("DOMContentLoaded", () => {
+  const speak = (text) => {
+    window.speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    window.speechSynthesis.speak(utter);
+  };
+
+  // Load saved data
+  ["notes", "dates", "todos"].forEach((id) => {
+    document.getElementById(id).value =
+      localStorage.getItem("batcave_" + id) || "";
+  });
+
+  document.getElementById("saveBtn").onclick = () => {
+    ["notes", "dates", "todos"].forEach((id) => {
+      localStorage.setItem("batcave_" + id, document.getElementById(id).value);
+    });
+    speak("Saved everything, sir.");
+  };
+
+  document.getElementById("clearBtn").onclick = () => {
+    ["notes", "dates", "todos"].forEach((id) => {
+      document.getElementById(id).value = "";
+      localStorage.removeItem("batcave_" + id);
+    });
+    speak("Everything cleared, Master Wayne.");
+  };
+
+  // Reminder logic
+  let reminderInterval = null;
+  let reminderAudio = document.getElementById("reminderSound");
+
+  function setReminder() {
+    const time = document.getElementById("reminderTime").value;
+    const text = document.getElementById("reminderText").value.trim();
+    if (!time || !text) {
+      alert("Please set both time and reminder text.");
+      return;
+    }
+
+    if (reminderInterval) clearInterval(reminderInterval);
+
+    reminderInterval = setInterval(() => {
+      const now = new Date();
+      const currentTime = now.toTimeString().slice(0, 5);
+      if (currentTime === time) {
+        reminderAudio.play();
+        speak(text);
+        clearInterval(reminderInterval);
+      }
+    }, 1000);
+
+    speak("Reminder set for " + time);
+  }
+
+  function stopReminder() {
+    if (reminderInterval) clearInterval(reminderInterval);
+    reminderAudio.pause();
+    reminderAudio.currentTime = 0;
+    speak("Reminder stopped.");
+  }
+
+  // ✅ VOICE COMMANDS
+  function startVoiceCommands() {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Speech Recognition not supported.");
+      return;
+    }
+
+    const rec = new SpeechRecognition();
+    rec.lang = "en-US";
+    rec.interimResults = false;
+    rec.continuous = false;
+
+    rec.onstart = () => console.log("🎙️ Listening...");
+
+    rec.onresult = (event) => {
+      const command = event.results[0][0].transcript.toLowerCase().trim();
+      console.log("Voice Command:", command);
+      document.getElementById("commandLog").textContent = "🎤 " + command;
+
+      if (command.includes("note")) {
+        const text = command.replace("note", "").trim();
+        document.getElementById("notes").value += text + " ";
+        speak("Added to notes.");
+      } else if (command.includes("date")) {
+        const text = command.replace("date", "").trim();
+        document.getElementById("dates").value += text + " ";
+        speak("Added to dates.");
+      } else if (command.includes("to do") || command.includes("todo")) {
+        const text = command.replace(/to ?do/, "").trim();
+        document.getElementById("todos").value += text + " ";
+        speak("Added to to-do list.");
+      } else if (command.includes("save")) {
+        document.getElementById("saveBtn").click();
+      } else if (command.includes("clear all")) {
+        document.getElementById("clearBtn").click();
+      } else if (command.includes("remind me at")) {
+        const match = command.match(/remind me at (\d{1,2}:\d{2}) (.+)/);
+        if (match) {
+          let time = match[1];
+          if (time.length === 4) time = "0" + time;
+          document.getElementById("reminderTime").value = time;
+          document.getElementById("reminderText").value = match[2];
+          setReminder();
+        } else {
+          speak("Say something like: remind me at 14:30 to attend class.");
+        }
+      } else if (command.includes("stop reminder")) {
+        stopReminder();
+      } else if (command.includes("show time")) {
+        const now = new Date();
+        speak("It's " + now.toLocaleTimeString());
+      } else {
+        speak("Command not recognized.");
+      }
+
+      // Restart after handling
+      setTimeout(() => rec.start(), 1000);
+    };
+
+    rec.onerror = () => {
+      speak("Didn't catch that.");
+      setTimeout(() => rec.start(), 1000);
+    };
+
+    rec.onend = () => {
+      setTimeout(() => rec.start(), 500);
+    };
+
+    rec.start();
+  }
+
+  startVoiceCommands(); // Start listening on load
+});
+</script>
+
+    
+  </body>
+</html>

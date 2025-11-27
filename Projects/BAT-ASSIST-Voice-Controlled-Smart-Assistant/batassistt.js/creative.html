@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🦇 Which Batman Villain Are You?</title>
+    <style>
+        :root {
+            --bat-yellow: #F0E130;
+            --bat-dark: #0F0F0F;
+            --bat-light: #1E1E1E;
+            --bat-accent: #2A52BE;
+            --joker-purple: #9B59B6;
+            --harley-red: #E74C3C;
+            --riddler-green: #2ECC71;
+            --bane-orange: #E67E22;
+            --ivy-green: #27AE60;
+            --penguin-blue: #3498DB;
+            --twoface-blue: #2980B9;
+            --scarecrow-brown: #D35400;
+            --catwoman-purple: #8E44AD;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: var(--bat-dark);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            background-image: url('https://i.imgur.com/2QJQVhK.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            animation: bgPan 30s infinite alternate linear;
+        }
+        
+        @keyframes bgPan {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 100% 100%; }
+        }
+        
+        .quiz-container {
+            max-width: 700px;
+            margin: 20px auto;
+            background: rgba(15, 15, 15, 0.9);
+            border: 3px solid var(--bat-yellow);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 0 30px rgba(240, 225, 48, 0.5);
+            backdrop-filter: blur(5px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quiz-container::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(45deg, 
+                var(--bat-yellow), 
+                var(--joker-purple), 
+                var(--harley-red), 
+                var(--riddler-green),
+                var(--bane-orange));
+            z-index: -1;
+            filter: blur(20px);
+            opacity: 0.3;
+            animation: gradientBG 15s ease infinite;
+            background-size: 400% 400%;
+        }
+        
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        h1 {
+            color: var(--bat-yellow);
+            text-shadow: 0 0 15px rgba(240, 225, 48, 0.7);
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            letter-spacing: 2px;
+            position: relative;
+        }
+        
+        h1::after {
+            content: "";
+            display: block;
+            width: 100px;
+            height: 4px;
+            background: var(--bat-yellow);
+            margin: 15px auto;
+            box-shadow: 0 0 10px var(--bat-yellow);
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            color: white;
+            text-shadow: 0 0 5px rgba(255,255,255,0.3);
+        }
+        
+        .quiz-question {
+            margin-bottom: 40px;
+            display: none;
+            animation: fadeIn 0.7s;
+            padding: 20px;
+            border-radius: 10px;
+            background: rgba(30, 30, 30, 0.7);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .quiz-question.active {
+            display: block;
+        }
+        
+        .quiz-option {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            margin: 15px 0;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid var(--bat-accent);
+            color: white;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .quiz-option:hover {
+            background: rgba(42, 82, 190, 0.5);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+        
+        #quiz-result {
+            display: none;
+            padding: 20px;
+            animation: fadeIn 1s;
+        }
+        
+        .villain-card {
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: all 0.5s;
+        }
+        
+        .villain-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.7);
+        }
+        
+        .joker-card { background: linear-gradient(135deg, rgba(155, 89, 182, 0.3), rgba(0, 0, 0, 0.9)); border: 3px solid var(--joker-purple); }
+        .harley-card { background: linear-gradient(135deg, rgba(231, 76, 60, 0.3), rgba(0, 0, 0, 0.9)); border: 3px solid var(--harley-red); }
+        .riddler-card { background: linear-gradient(135deg, rgba(46, 204, 113, 0.3), rgba(0, 0, 0, 0.9)); border: 3px solid var(--riddler-green); }
+        .bane-card { background: linear-gradient(135deg, rgba(230, 126, 34, 0.3), rgba(0, 0, 0, 0.9)); border: 3px solid var(--bane-orange); }
+        .ivy-card { background: linear-gradient(135deg, rgba(39, 174, 96, 0.3), rgba(0, 0, 0, 0.9)); border: 3px solid var(--ivy-green); }
+        .penguin-card { background: linear-gradient(135deg, rgba(52, 152, 219, 0.3), rgba(0, 0, 0, 0.9)); border: 3px solid var(--penguin-blue); }
+        .twoface-card { background: linear-gradient(135deg, rgba(41, 128, 185, 0.3), rgba(0, 0, 0, 0.9)); border: 3px solid var(--twoface-blue); }
+        .scarecrow-card { background: linear-gradient(135deg, rgba(211, 84, 0, 0.3), rgba(0, 0, 0, 0.9)); border: 3px solid var(--scarecrow-brown); }
+        .catwoman-card { background: linear-gradient(135deg, rgba(142, 68, 173, 0.3), rgba(0, 0, 0, 0.9)); border: 3px solid var(--catwoman-purple); }
+        
+        .threat-meter {
+            height: 40px;
+            background: #111;
+            border-radius: 20px;
+            margin: 30px 0;
+            overflow: hidden;
+            border: 3px solid var(--bat-yellow);
+            box-shadow: 0 0 15px rgba(240, 225, 48, 0.3);
+        }
+        
+        .threat-level {
+            height: 100%;
+            background: linear-gradient(90deg, #ff2a6d, #d300c5, #7e2bff);
+            width: 0%;
+            transition: width 2s cubic-bezier(0.22, 1, 0.36, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            text-shadow: 0 0 5px rgba(0,0,0,0.5);
+        }
+        
+        .share-btn {
+            background: var(--bat-yellow);
+            color: var(--bat-dark);
+            border: none;
+            padding: 15px 30px;
+            margin-top: 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(240, 225, 48, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .share-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 25px var(--bat-yellow);
+        }
+        
+        .share-btn::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                rgba(255,255,255,0.3),
+                rgba(255,255,255,0.1),
+                transparent
+            );
+            transform: rotate(30deg);
+            transition: all 0.3s;
+        }
+        
+        .share-btn:hover::after {
+            left: 100%;
+        }
+        
+        .villain-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px currentColor;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #333;
+            margin: 30px 0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--bat-yellow), #FF8C00);
+            width: 0%;
+            transition: width 0.7s cubic-bezier(0.65, 0, 0.35, 1);
+            position: relative;
+        }
+        
+        .progress::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                90deg,
+                rgba(255,255,255,0.1),
+                rgba(255,255,255,0.3),
+                rgba(255,255,255,0.1)
+            );
+            animation: shine 2s infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .villain-title {
+            font-size: 2.5rem;
+            margin: 20px 0;
+            text-shadow: 0 0 10px currentColor;
+            letter-spacing: 2px;
+        }
+        
+        .villain-desc {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+        
+        .alfred-comment {
+            font-style: italic;
+            background: rgba(0,0,0,0.5);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid var(--bat-yellow);
+            position: relative;
+        }
+        
+        .alfred-comment::before {
+            content: "🦇";
+            position: absolute;
+            left: -25px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+        }
+        
+        .villain-strengths {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .strength-tag {
+            background: rgba(255,255,255,0.1);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .bat-signal {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: var(--bat-yellow);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            cursor: pointer;
+            box-shadow: 0 0 20px var(--bat-yellow);
+            z-index: 100;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        @media (max-width: 768px) {
+            .quiz-container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            h2 {
+                font-size: 1.4rem;
+            }
+            
+            .quiz-option {
+                padding: 15px;
+                font-size: 1rem;
+            }
+            
+            .villain-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>🦇 WHICH BATMAN VILLAIN ARE YOU?</h1>
+        <div class="progress-bar">
+            <div class="progress" id="quiz-progress"></div>
+        </div>
+        
+        <!-- Question 1 -->
+        <div class="quiz-question active" id="q1">
+            <h2>Your friend betrays you. You...</h2>
+            <button class="quiz-option" data-villain="joker">Laugh hysterically and plot revenge</button>
+            <button class="quiz-option" data-villain="harley">Blame yourself and try to win them back</button>
+            <button class="quiz-option" data-villain="riddler">Leave cryptic clues to expose them</button>
+            <button class="quiz-option" data-villain="bane">Break their spine (metaphorically... maybe)</button>
+            <button class="quiz-option" data-villain="ivy">Turn their house into a jungle</button>
+            <button class="quiz-option" data-villain="penguin">Destroy their reputation in high society</button>
+            <button class="quiz-option" data-villain="twoface">Flip a coin to decide their fate</button>
+            <button class="quiz-option" data-villain="scarecrow">Make them face their worst fears</button>
+        </div>
+        
+        <!-- Question 2 -->
+        <div class="quiz-question" id="q2">
+            <h2>Your ideal Gotham hangout?</h2>
+            <button class="quiz-option" data-villain="joker">Abandoned amusement park</button>
+            <button class="quiz-option" data-villain="harley">The circus (home sweet home!)</button>
+            <button class="quiz-option" data-villain="riddler">Gotham Public Library (so many secrets...)</button>
+            <button class="quiz-option" data-villain="bane">The sewers (strategic advantage)</button>
+            <button class="quiz-option" data-villain="ivy">Gotham Botanical Gardens</button>
+            <button class="quiz-option" data-villain="penguin">Iceberg Lounge (classy villainy)</button>
+            <button class="quiz-option" data-villain="twoface">The courthouse (for old times' sake)</button>
+            <button class="quiz-option" data-villain="catwoman">The Gotham Museum of Art</button>
+        </div>
+        
+        <!-- Question 3 -->
+        <div class="quiz-question" id="q3">
+            <h2>Choose your weapon:</h2>
+            <button class="quiz-option" data-villain="joker">Laughing gas (it's funny!)</button>
+            <button class="quiz-option" data-villain="harley">A giant mallet (bonk!)</button>
+            <button class="quiz-option" data-villain="riddler">A riddle wrapped in an enigma</button>
+            <button class="quiz-option" data-villain="bane">VENOM STEROIDS 💪</button>
+            <button class="quiz-option" data-villain="ivy">Poisonous pollen</button>
+            <button class="quiz-option" data-villain="penguin">Umbrella with hidden gadgets</button>
+            <button class="quiz-option" data-villain="scarecrow">Fear toxin</button>
+            <button class="quiz-option" data-villain="catwoman">Retractable claws</button>
+        </div>
+        
+        <!-- Question 4 -->
+        <div class="quiz-question" id="q4">
+            <h2>Your theme song would be:</h2>
+            <button class="quiz-option" data-villain="joker">"Send in the Clowns" (chaotic version)</button>
+            <button class="quiz-option" data-villain="harley">"Dangerous Woman" (but make it bubbly)</button>
+            <button class="quiz-option" data-villain="riddler">"The Riddle" by Gigi D'Agostino</button>
+            <button class="quiz-option" data-villain="bane">"The Sound of Silence" (menacingly)</button>
+            <button class="quiz-option" data-villain="ivy">"Bad Guy" by Billie Eilish</button>
+            <button class="quiz-option" data-villain="penguin">"Smooth Criminal" by Michael Jackson</button>
+            <button class="quiz-option" data-villain="twoface">"Torn" by Natalie Imbruglia</button>
+            <button class="quiz-option" data-villain="catwoman">"Material Girl" by Madonna</button>
+        </div>
+        
+        <!-- Question 5 -->
+        <div class="quiz-question" id="q5">
+            <h2>How would you describe your fashion?</h2>
+            <button class="quiz-option" data-villain="joker">Purple suit, green hair - ICONIC</button>
+            <button class="quiz-option" data-villain="harley">Colorful chaos with pigtails!</button>
+            <button class="quiz-option" data-villain="riddler">Green question marks everywhere</button>
+            <button class="quiz-option" data-villain="bane">Military-grade tactical... with a mask</button>
+            <button class="quiz-option" data-villain="ivy">Plant-based couture (leaves are in!)</button>
+            <button class="quiz-option" data-villain="penguin">Tuxedo with a monocle</button>
+            <button class="quiz-option" data-villain="twoface">Two different suits (one nice, one burnt)</button>
+            <button class="quiz-option" data-villain="catwoman">Black leather with cat ears</button>
+        </div>
+        
+        <!-- Question 6 -->
+        <div class="quiz-question" id="q6">
+            <h2>Your villainous motivation is:</h2>
+            <button class="quiz-option" data-villain="joker">Chaos for chaos' sake</button>
+            <button class="quiz-option" data-villain="harley">Love makes you do crazy things</button>
+            <button class="quiz-option" data-villain="riddler">Proving you're the smartest</button>
+            <button class="quiz-option" data-villain="bane">Breaking the Bat</button>
+            <button class="quiz-option" data-villain="ivy">Saving the environment (by any means)</button>
+            <button class="quiz-option" data-villain="penguin">Money and power</button>
+            <button class="quiz-option" data-villain="twoface">Justice... or injustice?</button>
+            <button class="quiz-option" data-villain="catwoman">Shiny things and adrenaline</button>
+        </div>
+        
+        <!-- Question 7 -->
+        <div class="quiz-question" id="q7">
+            <h2>How do you feel about Batman?</h2>
+            <button class="quiz-option" data-villain="joker">My best frenemy!</button>
+            <button class="quiz-option" data-villain="harley">He's kinda dreamy but also the worst</button>
+            <button class="quiz-option" data-villain="riddler">I'll outsmart him one day!</button>
+            <button class="quiz-option" data-villain="bane">I will break him</button>
+            <button class="quiz-option" data-villain="ivy">Annoying do-gooder</button>
+            <button class="quiz-option" data-villain="penguin">Business rival</button>
+            <button class="quiz-option" data-villain="scarecrow">His fear is delicious</button>
+            <button class="quiz-option" data-villain="catwoman">It's complicated...</button>
+        </div>
+        
+        <!-- Question 8 -->
+        <div class="quiz-question" id="q8">
+            <h2>Choose a Gotham getaway vehicle:</h2>
+            <button class="quiz-option" data-villain="joker">Joy buzzer-equipped van</button>
+            <button class="quiz-option" data-villain="harley">Hypermobile with glitter bombs</button>
+            <button class="quiz-option" data-villain="riddler">Riddle-covered sports car</button>
+            <button class="quiz-option" data-villain="bane">Tank (obviously)</button>
+            <button class="quiz-option" data-villain="ivy">Plant-controlled vine mobile</button>
+            <button class="quiz-option" data-villain="penguin">Penguin-shaped submarine</button>
+            <button class="quiz-option" data-villain="twoface">Two-tone motorcycle</button>
+            <button class="quiz-option" data-villain="catwoman">Motorcycle with cat ears</button>
+        </div>
+        
+        <!-- Results Section -->
+        <div id="quiz-result">
+            <div id="villain-card" class="villain-card">
+                <div id="villain-icon" class="villain-icon">🃏</div>
+                <h2 id="villain-title" class="villain-title">YOU ARE THE JOKER!</h2>
+                <p id="villain-desc" class="villain-desc">"Agent of chaos. Your humor is darker than Gotham's alleys. You see life as one big joke, and everyone else is the punchline."</p>
+                
+                <div class="villain-strengths">
+                    <span class="strength-tag">Chaotic</span>
+                    <span class="strength-tag">Unpredictable</span>
+                    <span class="strength-tag">Dark Humor</span>
+                    <span class="strength-tag">Iconic</span>
+                </div>
+                
+                <div class="threat-meter">
+                    <div id="threat-level" class="threat-level">DANGER: 0%</div>
+                </div>
+                
+                <h3>🦇 ALFRED'S THREAT ASSESSMENT:</h3>
+                <p id="alfred-comment" class="alfred-comment">"Sir, I strongly recommend avoiding this individual. Threat level: 'Why so serious?'"</p>
+                
+                <button class="share-btn" id="share-btn">SHARE YOUR RESULTS</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="bat-signal" id="restart-btn" title="Take the quiz again">🦇</div>
+
+    <script>
+        // Villain scoring
+        const villainScores = {
+            joker: 0,
+            harley: 0,
+            riddler: 0,
+            bane: 0,
+            ivy: 0,
+            penguin: 0,
+            twoface: 0,
+            scarecrow: 0,
+            catwoman: 0
+        };
+        
+        // Villain data
+        const villainData = {
+            joker: {
+                title: "THE JOKER 🤡",
+                desc: "Chaos is your canvas, and Gotham is your masterpiece. You find humor in the absurd and have a... complicated relationship with bats. Life's a joke, and you're the punchline!",
+                icon: "🃏",
+                threat: 95,
+                alfred: "Sir, I strongly recommend avoiding this individual. Threat level: 'Why so serious?'",
+                strengths: ["Chaotic", "Unpredictable", "Dark Humor", "Iconic"]
+            },
+            harley: {
+                title: "HARLEY QUINN 💖",
+                desc: "You're a bundle of chaotic energy with a heart that loves too much. Loyal to a fault, but cross you and that mallet comes out! Equal parts dangerous and adorable.",
+                icon: "💖",
+                threat: 80,
+                alfred: "Highly unpredictable. Approach with caution and possibly snacks.",
+                strengths: ["Energetic", "Loyal", "Acrobatic", "Dangerously Cute"]
+            },
+            riddler: {
+                title: "THE RIDDLER 🧩",
+                desc: "Your mind works in puzzles and patterns. You can't resist leaving clues, even when it's not strategically advisable. You're not crazy - you're just smarter than everyone else!",
+                icon: "🧩",
+                threat: 70,
+                alfred: "Annoying but manageable. Just don't play his games, Master Wayne.",
+                strengths: ["Brilliant", "Puzzling", "Methodical", "Egotistical"]
+            },
+            bane: {
+                title: "BANE 💪",
+                desc: "You were born in the darkness. Strategic, physically imposing, and you definitely know how to break a bat. You see strength as the ultimate virtue and weakness as the only sin.",
+                icon: "💪",
+                threat: 90,
+                alfred: "Absolute unit. Would suggest calling Superman for backup.",
+                strengths: ["Strong", "Strategic", "Disciplined", "Intimidating"]
+            },
+            ivy: {
+                title: "POISON IVY 🌿",
+                desc: "Nature's fury personified. You'll stop at nothing to protect the green world, even if it means eliminating most of humanity. Your beauty is as deadly as your plants.",
+                icon: "🌿",
+                threat: 85,
+                alfred: "Do not approach without full environmental protection, sir.",
+                strengths: ["Eco-Terrorist", "Seductive", "Brilliant", "Plant Control"]
+            },
+            penguin: {
+                title: "THE PENGUIN 🎩",
+                desc: "Classy criminal with a taste for the finer things. You might look refined with your monocle and umbrella, but you're just as ruthless as any Gotham rogue.",
+                icon: "🎩",
+                threat: 75,
+                alfred: "A criminal with pretensions of class. Still dangerous.",
+                strengths: ["Resourceful", "Connected", "Business Savvy", "Deceptively Strong"]
+            },
+            twoface: {
+                title: "TWO-FACE ⚖️",
+                desc: "Once Gotham's brightest DA, now torn between justice and chaos. You let fate decide with the flip of a coin - heads you live, tails you die.",
+                icon: "⚖️",
+                threat: 82,
+                alfred: "Tragic figure, but don't let that fool you - he's deadly either way.",
+                strengths: ["Dual Nature", "Former Lawyer", "Unpredictable", "Determined"]
+            },
+            scarecrow: {
+                title: "SCARECROW 🌾",
+                desc: "Master of fear who preys on people's deepest terrors. You see fear as the ultimate truth of human existence, and you're happy to help people face it... whether they want to or not.",
+                icon: "🌾",
+                threat: 88,
+                alfred: "His fear toxin is particularly nasty. Recommend full gas protection.",
+                strengths: ["Psychological", "Intelligent", "Manipulative", "Terrifying"]
+            },
+            catwoman: {
+                title: "CATWOMAN 🐾",
+                desc: "Sleek, sexy, and always lands on your feet. You dance on the line between villain and anti-hero, motivated by shiny things and your own moral code.",
+                icon: "🐾",
+                threat: 65,
+                alfred: "Less villain, more... complicated. Still, keep an eye on the silverware.",
+                strengths: ["Agile", "Charismatic", "Skilled Thief", "Independent"]
+            }
+        };
+        
+        // Quiz progression
+        let currentQuestion = 1;
+        const totalQuestions = 8;
+        
+        // Update progress bar
+        function updateProgress() {
+            const progress = (currentQuestion / totalQuestions) * 100;
+            document.getElementById('quiz-progress').style.width = `${progress}%`;
+        }
+        
+        // Handle option selection
+        document.querySelectorAll('.quiz-option').forEach(option => {
+            option.addEventListener('click', function() {
+                // Add to villain score
+                const villain = this.dataset.villain;
+                villainScores[villain] += 1;
+                
+                // Add animation to selected button
+                this.style.transform = 'scale(0.95)';
+                this.style.boxShadow = '0 0 20px currentColor';
+                setTimeout(() => {
+                    this.style.transform = '';
+                    this.style.boxShadow = '';
+                }, 300);
+                
+                // Move to next question or show results
+                currentQuestion++;
+                updateProgress();
+                
+                if (currentQuestion <= totalQuestions) {
+                    document.querySelector('.quiz-question.active').classList.remove('active');
+                    document.getElementById(`q${currentQuestion}`).classList.add('active');
+                    
+                    // Scroll to top of question
+                    document.getElementById(`q${currentQuestion}`).scrollIntoView({ 
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                } else {
+                    showResults();
+                }
+            });
+        });
+        
+        // Determine and display results
+        function showResults() {
+            document.querySelector('.quiz-question.active').classList.remove('active');
+            
+            // Get top villain
+            let topVillain = 'joker';
+            let topScore = 0;
+            
+            for (const [villain, score] of Object.entries(villainScores)) {
+                if (score > topScore) {
+                    topScore = score;
+                    topVillain = villain;
+                }
+            }
+            
+            // Display results
+            const result = villainData[topVillain];
+            const resultCard = document.getElementById('villain-card');
+            
+            // Set villain class for styling
+            resultCard.className = `villain-card ${topVillain}-card`;
+            
+            document.getElementById('villain-icon').textContent = result.icon;
+            document.getElementById('villain-title').textContent = result.title;
+            document.getElementById('villain-desc').textContent = result.desc;
+            document.getElementById('alfred-comment').textContent = result.alfred;
+            
+            // Update strengths
+            const strengthsContainer = document.querySelector('.villain-strengths');
+            strengthsContainer.innerHTML = '';
+            result.strengths.forEach(strength => {
+                const tag = document.createElement('span');
+                tag.className = 'strength-tag';
+                tag.textContent = strength;
+                strengthsContainer.appendChild(tag);
+            });
+            
+            // Animate threat level
+            const threatLevel = document.getElementById('threat-level');
+            let threatPercent = 0;
+            const threatInterval = setInterval(() => {
+                threatPercent += 2;
+                threatLevel.style.width = `${threatPercent}%`;
+                threatLevel.textContent = `DANGER: ${threatPercent}%`;
+                
+                if (threatPercent >= result.threat) {
+                    clearInterval(threatInterval);
+                }
+            }, 30);
+            
+            // Show results
+            document.getElementById('quiz-result').style.display = 'block';
+            
+            // Scroll to results
+            document.getElementById('quiz-result').scrollIntoView({ behavior: 'smooth' });
+            
+            // Play villain laugh if Joker
+            if (topVillain === 'joker') {
+                const audio = new Audio('https://www.myinstants.com/media/sounds/joker-laugh.mp3');
+                audio.volume = 0.3;
+                audio.play().catch(e => console.log("Auto-play prevented:", e));
+            }
+        }
+        
+        // Share button
+        document.getElementById('share-btn').addEventListener('click', function() {
+            const villain = document.getElementById('villain-title').textContent;
+            const text = `I just discovered I'm ${villain} in the Batman Villain Quiz! 🦇 Find out which Gotham rogue you are:`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Batman Villain Quiz',
+                    text: text,
+                    url: window.location.href
+                }).catch(err => {
+                    console.log('Error sharing:', err);
+                    fallbackShare();
+                });
+            } else {
+                fallbackShare();
+            }
+            
+            function fallbackShare() {
+                alert(`${text}\n\n(Link: ${window.location.href})`);
+            }
+        });
+        
+        // Restart button
+        document.getElementById('restart-btn').addEventListener('click', function() {
+            // Reset scores
+            for (const villain in villainScores) {
+                villainScores[villain] = 0;
+            }
+            
+            // Reset progress
+            currentQuestion = 1;
+            updateProgress();
+            
+            // Hide results
+            document.getElementById('quiz-result').style.display = 'none';
+            
+            // Show first question
+            document.querySelectorAll('.quiz-question').forEach(q => q.classList.remove('active'));
+            document.getElementById('q1').classList.add('active');
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        
+        // Initialize
+        updateProgress();
+    </script>
+</body>
+</html>

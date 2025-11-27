@@ -1,0 +1,183 @@
+/* Apply basic font styling */
+@import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@100;200;300;400;500;600;700&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Roboto Mono", monospace;
+}
+
+body {
+  background-color: white;
+  color: black;
+}
+
+/* Main section styling */
+.main {
+  min-height: 100vh;
+  position: relative;
+  width: 100%;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.main .image-container {
+  padding: 0;
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.main .image-container .image {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.main .image-container .image img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+/* Heading and paragraph styling */
+.main .image-container h1 ,h2{
+  color: #00bcd4;
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 40px;
+  position: absolute;
+  z-index: 1; /* To display the text over the image */
+  top: 10%;
+}
+
+.main .image-container p {
+  color: #324042;
+  text-align: center;
+  margin-bottom: 40px;
+  position: absolute;
+  z-index: 1; /* To display the text over the image */
+  top: 20%;
+}
+
+.main .input {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40vw;
+  height: 50px;
+  border-radius: 20px;
+  background: rgb(202 253 255 / 50%);
+  position: absolute;
+  bottom: 10%;
+}
+
+.main .input .talk {
+  background: transparent;
+  outline: none;
+  border: none;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.main .input .talk i {
+  font-size: 20px;
+  color: #aed0d0;
+}
+
+.main .input .content {
+  color: #aed0d0;
+  font-size: 15px;
+  margin-right: 20px;
+}
+
+/* Button styling */
+.dark-mode-btn, .undo-btn {
+  padding: 10px 20px;
+  margin-top: 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* Initially hide the undo button */
+.undo-btn {
+  display: none;
+  background-color: #ff3b3b;  /* Red for undo */
+  color: white;
+}
+
+/* Dark mode button styling */
+.dark-mode-btn {
+  background-color: #4CAF50;  /* Green for dark mode */
+  color: white;
+}
+/* Batcave Dashboard Styles */
+.batcave-container {
+  max-width: 700px;
+  margin: 40px auto;
+  background: #121212;
+  color: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  font-family: "Roboto Mono", monospace;
+  box-shadow: 0 0 15px #00bcd4;
+}
+
+.batcave-container h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #00bcd4;
+}
+
+.dashboard-section {
+  margin-bottom: 20px;
+}
+
+.dashboard-section h2 {
+  margin-bottom: 10px;
+  color: #00bcd4;
+}
+
+textarea {
+  width: 100%;
+  min-height: 100px;
+  border-radius: 8px;
+  border: none;
+  padding: 15px;
+  background: #222;
+  color: #eee;
+  font-size: 14px;
+  resize: vertical;
+}
+
+#saveBtn {
+  background-color: #00bcd4;
+  color: black;
+  border: none;
+  padding: 12px 25px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: block;
+  margin: 0 auto;
+  transition: background-color 0.3s ease;
+}
+
+#saveBtn:hover {
+  background-color: #028f9e;
+}
+
