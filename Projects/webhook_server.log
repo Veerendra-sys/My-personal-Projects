@@ -1,6 +1,0 @@
-2026-10-06 15:52:26,090 [INFO] 🚀 WEBHOOK TRIGGERED! Pipeline failed for repository: you/repo, Run ID: 123, Branch: main
-2026-10-06 15:52:26,090 [INFO] ✅ Webhook authentication successful. Fetching logs synchronously to prevent Vercel freeze.
-2026-10-06 15:52:26,091 [INFO] Using logs provided in webhook payload.
-2026-10-06 15:52:26,091 [INFO] === START OF LOGS FOR JOB: test-frontend ===
-2026-10-06 15:52:26,091 [INFO] === END OF LOGS FOR JOB: test-frontend ===
-2026-10-06 15:52:26,091 [WARNING] No head_sha provided in webhook payload. Cannot trigger self-healing agent.
